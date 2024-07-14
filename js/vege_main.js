@@ -27,7 +27,7 @@ function saveData() {
 
 function updateDisplay() {
   countDescription.textContent = `我已經吃了 ${smokingData.count.toFixed(1)} 餐素食`;
-  const progress = (smokingData.count / 80) * 100;
+  const progress = (smokingData.count / 100) * 100;
   progressBar.style.width = `${progress}%`;
   updateChart();
 }
