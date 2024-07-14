@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>吃素的約定</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+
+<body>
+  <!-- <script src="js/function.js"></script> -->
+  <div class="container">
+    <h1>吃素求好運</h1>
+    <div id="habit-display">
+      <p>目標：吃素80餐</p>
+      <p id="count-description"></p>
+      <div class="progress-bar">
+        <div class="progress" id="progress-bar"></div>
+      </div>
+      <div class="button-container">
+        <button id="increment-full">吃一餐</button>
+        <button id="increment-half">吃半餐</button>
+        <i id="settings-icon" class="fas fa-cog"></i>
+        
+      </div>
+    </div>
+    <div id="chart-container">
+      <div class="chart-header">
+        <span>我的吃素紀錄</span>
+        <select id="time-scale">
+          <option value="day">每日視圖</option>
+          <option value="hour">每小時視圖</option>
+        </select>
+      </div>
+      <canvas id="habit-chart"></canvas>
+    </div>
+  </div>
+
+  <div id="encouragement-modal" class="modal">
+    <div class="modal-content">
+      <span class="close">&times;</span>
+      <p id="encouragement-message"></p>
+      <button id="close-modal">關閉</button>
+    </div>
+  </div>
+
+  <div id="settings-modal" class="modal">
+    <div class="modal-content">
+      <span class="close">&times;</span>
+      <h2>設置</h2>
+      <button id="decrement-one">-1</button>
+      <button id="reset-count">歸零</button>
+    </div>
+  </div>
+  <script src="js/vege_main.js"></script>
+</body>
+</html>

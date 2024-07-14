@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>戒菸小幫手</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <link rel="stylesheet" href="habit-tracker/css/styles.css">
+</head>
+<body>
+    <div class="container">
+        <h1>戒菸小幫手</h1>
+        <div id="habit-display">
+            <p>目標：少抽100口菸</p>
+            <p id="count-description"></p>
+            <div class="progress-bar">
+                <div class="progress" id="progress-bar"></div>
+            </div>
+            <div class="button-container">
+                <button id="increment-full">少抽一口</button>
+                <button id="increment-half">少抽半口</button>
+                <i id="settings-icon" class="fas fa-cog"></i>
+            </div>
+        </div>
+        <div id="chart-container">
+            <div class="chart-header">
+                <span>我的戒菸紀錄</span>
+                <select id="time-scale">
+                    <option value="day">每日視圖</option>
+                    <option value="hour">每小時視圖</option>
+                </select>
+            </div>
+            <canvas id="habit-chart"></canvas>
+        </div>
+    </div>
+
+    <div id="encouragement-modal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <p id="encouragement-message"></p>
+            <button id="close-modal">關閉</button>
+        </div>
+    </div>
+
+    <div id="settings-modal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>設置</h2>
+            <button id="decrement-one">-1</button>
+            <button id="reset-count">歸零</button>
+        </div>
+    </div>
+
+    <script>
+        const countDescription = document.getElementById('count-description');
+        const progressBar = document.getElementById('progress-bar');
+        const incrementFullBtn = document.getElementById('increment-full');
+        const incrementHalfBtn = document.getElementById('increment-half');
+        const timeScaleSelect = document.getElementById('time-scale');
+        const encouragementMessage = document.getElementById('encouragement-message');
+        const encouragementModal = document.getElementById('encouragement-modal');
+        const settingsIcon = document.getElementById('settings-icon');
+        const settingsModal = document.getElementById('settings-modal');
+        const decrementOneBtn = document.getElementById('decrement-one');
+        const resetCountBtn = document.getElementById('reset-count');
+        const closeBtns = document.getElementsByClassName('close');
+        const closeModalBtn = document.getElementById('close-modal');
+
+        let smokingData = JSON.parse(localStorage.getItem('smokingData')) || {
+            count: 0,
+            records: []
+        };
+
+        const encouragementMessages = [
+            "現在進度怎麼樣了？？請向邱奕凱回報戒菸進度",
+        ];
+
+        function saveData() {
+            localStorage.setItem('smokingData', JSON.stringify(smokingData));
+        }
+
+        function updateDisplay() {
+            countDescription.textContent = `我已經累積少抽了 ${smokingData.count.toFixed(1)} 口`;
+            const progress = (smokingData.count / 100) * 100;
+            progressBar.style.width = `${progress}%`;
+            updateChart();
+        }
+
+        function incrementCount(amount) {
+            smokingData.count += amount;
+            const now = new Date();
+            const today = now.toISOString().split('T')[0];
+            const hour = now.getHours();
+            const existingRecord = smokingData.records.find(record => record.date === today && record.hour === hour);
+            if (existingRecord) {
+                existingRecord.count += amount;
+            } else {
+                smokingData.records.push({
+                    date: today,
+                    hour: hour,
+                    count: amount
+                });
+            }
+            saveData();
+            updateDisplay();
+        }
+
+        function updateChart() {
+            const ctx = document.getElementById('habit-chart').getContext('2d');
+            const timeScale = timeScaleSelect.value;
+
+            let labels, data;
+            if (timeScale === 'hour') {
+                const today = new Date().toISOString().split('T')[0];
+                labels = Array.from({length: 24}, (_, i) => i);
+                data = labels.map(hour => {
+                    const record = smokingData.records.find(r => r.date === today && r.hour === hour);
+                    return record ? record.count : 0;
+                });
+            } else {
+                const recordsByDate = smokingData.records.reduce((acc, record) => {
+                    if (!acc[record.date]) {
+                        acc[record.date] = 0;
+                    }
+                    acc[record.date] += record.count;
+                    return acc;
+                }, {});
+                labels = Object.keys(recordsByDate).sort();
+                data = labels.map(date => recordsByDate[date]);
+            }
+
+            if (window.myChart) {
+                window.myChart.destroy();
+            }
+
+            window.myChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: '少抽菸數',
+                        data: data,
+                        backgroundColor: 'rgba(76, 175, 80, 0.6)',
+                        borderColor: 'rgba(76, 175, 80, 1)',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            suggestedMax: 10,
+                            title: {
+                                display: true,
+                                text: '口數'
+                            }
+                        },
+                        x: {
+                            title: {
+                                display: true,
+                                text: timeScale === 'hour' ? '小時' : '日期'
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        function showRandomEncouragement() {
+            const randomIndex = Math.floor(Math.random() * encouragementMessages.length);
+            encouragementMessage.textContent = encouragementMessages[randomIndex];
+            encouragementModal.style.display = "block";
+        }
+
+        function decrementOne() {
+            incrementCount(-1);
+        }
+
+        function resetCount() {
+            smokingData.count = 0;
+            smokingData.records = [];
+            saveData();
+            updateDisplay();
+            settingsModal.style.display = "none";
+        }
+
+        incrementFullBtn.addEventListener('click', () => incrementCount(1));
+        incrementHalfBtn.addEventListener('click', () => incrementCount(0.5));
+        timeScaleSelect.addEventListener('change', updateChart);
+        settingsIcon.addEventListener('click', () => settingsModal.style.display = "block");
+        decrementOneBtn.addEventListener('click', decrementOne);
+        resetCountBtn.addEventListener('click', resetCount);
+
+        Array.from(closeBtns).forEach(btn => {
+            btn.onclick = function() {
+                encouragementModal.style.display = "none";
+                settingsModal.style.display = "none";
+            }
+        });
+
+        closeModalBtn.onclick = function() {
+            encouragementModal.style.display = "none";
+        }
+
+        window.onclick = function(event) {
+            if (event.target == encouragementModal) {
+                encouragementModal.style.display = "none";
+            }
+            if (event.target == settingsModal) {
+                settingsModal.style.display = "none";
+            }
+        }
+
+        updateDisplay();
+        showRandomEncouragement();
+    </script>
+</body>
+</html>

@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>戒菸小幫手</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 0;
+            background-color: #e8f5e9;
+            color: #333;
+            font-size: 18px;
+        }
+        .container {
+            width: 100%;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+        h1 {
+            color: #2e7d32;
+            text-align: center;
+            margin-bottom: 20px;
+            font-size: 28px;
+        }
+        #habit-display {
+            background-color: #ffffff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        #habit-display p {
+            font-size: 20px;
+            margin: 10px 0;
+        }
+        .progress-bar {
+            width: 100%;
+            background-color: #c8e6c9;
+            border-radius: 5px;
+            overflow: hidden;
+            margin-top: 10px;
+        }
+        .progress {
+            width: 0;
+            height: 20px;
+            background-color: #4caf50;
+            transition: width 0.5s ease-in-out;
+        }
+        button {
+            background-color: #4caf50;
+            color: white;
+            border: none;
+            padding: 12px 15px;
+            margin: 10px 5px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            font-size: 16px;
+            width: calc(50% - 10px);
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        #chart-container {
+            background-color: #ffffff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            margin-top: 20px;
+            height: 300px;
+        }
+        .chart-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        select {
+            padding: 10px;
+            font-size: 16px;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+        }
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0,0,0,0.4);
+        }
+        .modal-content {
+            background-color: #fefefe;
+            margin: 15% auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 80%;
+            max-width: 400px;
+            border-radius: 8px;
+            text-align: center;
+        }
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        #close-modal {
+            margin-top: 15px;
+            padding: 10px 20px;
+            background-color: #4caf50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>戒菸小幫手</h1>
+        <div id="habit-display">
+            <p>目標：少抽100口菸</p>
+            <p id="count-description"></p>
+            <div class="progress-bar">
+                <div class="progress" id="progress-bar"></div>
+            </div>
+            <div style="display:inline-flex;">
+              <button id="increment-full">少抽一口</button>
+              <button id="increment-half">少抽半口</button>
+            </div>
+        </div>
+        <div id="chart-container">
+            <div class="chart-header">
+                <span>我的戒菸紀錄</span>
+                <select id="time-scale">
+                    <option value="day">每日視圖</option>
+                    <option value="hour">每小時視圖</option>
+                </select>
+            </div>
+            <canvas id="habit-chart"></canvas>
+        </div>
+    </div>
+
+    <div id="encouragement-modal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <p id="encouragement-message"></p>
+            <button id="close-modal">關閉</button>
+        </div>
+    </div>
+
+    <script>
+        const countDescription = document.getElementById('count-description');
+        const progressBar = document.getElementById('progress-bar');
+        const incrementFullBtn = document.getElementById('increment-full');
+        const incrementHalfBtn = document.getElementById('increment-half');
+        const timeScaleSelect = document.getElementById('time-scale');
+        const encouragementMessage = document.getElementById('encouragement-message');
+        const modal = document.getElementById('encouragement-modal');
+        const closeBtn = document.getElementsByClassName('close')[0];
+        const closeModalBtn = document.getElementById('close-modal');
+
+        let smokingData = JSON.parse(localStorage.getItem('smokingData')) || {
+            count: 0,
+            records: []
+        };
+
+        const encouragementMessages = [
+            "戒菸後，你的肺功能會逐漸恢復健康！",
+            "每少抽一口，你就離健康更近一步！",
+            "堅持戒菸，你的皮膚會變得更有光澤！",
+            "戒菸可以改善你的呼吸，讓你感覺更有活力！",
+            "堅持下去，你的心臟健康會得到顯著改善！",
+            "戒菸後，你的味覺和嗅覺會變得更加敏銳！",
+            "少抽一口，就是對自己和家人的一份愛！",
+            "堅持戒菸，你會發現自己更有精力面對生活！",
+            "戒菸可以幫助你省下不少錢，想想可以用來做什麼？",
+            "每一天不吸菸，都是對健康的一份投資！"
+        ];
+
+        function saveData() {
+            localStorage.setItem('smokingData', JSON.stringify(smokingData));
+        }
+
+        function updateDisplay() {
+            countDescription.textContent = `我已經累積少抽了 ${smokingData.count.toFixed(1)} 口`;
+            const progress = (smokingData.count / 100) * 100;
+            progressBar.style.width = `${progress}%`;
+            updateChart();
+        }
+
+        function incrementCount(amount) {
+            smokingData.count += amount;
+            const now = new Date();
+            const today = now.toISOString().split('T')[0];
+            const hour = now.getHours();
+            const existingRecord = smokingData.records.find(record => record.date === today && record.hour === hour);
+            if (existingRecord) {
+                existingRecord.count += amount;
+            } else {
+                smokingData.records.push({
+                    date: today,
+                    hour: hour,
+                    count: amount
+                });
+            }
+            saveData();
+            updateDisplay();
+        }
+
+        function updateChart() {
+            const ctx = document.getElementById('habit-chart').getContext('2d');
+            const timeScale = timeScaleSelect.value;
+
+            let labels, data;
+            if (timeScale === 'hour') {
+                const today = new Date().toISOString().split('T')[0];
+                labels = Array.from({length: 24}, (_, i) => i);
+                data = labels.map(hour => {
+                    const record = smokingData.records.find(r => r.date === today && r.hour === hour);
+                    return record ? record.count : 0;
+                });
+            } else {
+                const recordsByDate = smokingData.records.reduce((acc, record) => {
+                    if (!acc[record.date]) {
+                        acc[record.date] = 0;
+                    }
+                    acc[record.date] += record.count;
+                    return acc;
+                }, {});
+                labels = Object.keys(recordsByDate).sort();
+                data = labels.map(date => recordsByDate[date]);
+            }
+
+            if (window.myChart) {
+                window.myChart.destroy();
+            }
+
+            window.myChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: '少抽菸數',
+                        data: data,
+                        backgroundColor: 'rgba(76, 175, 80, 0.6)',
+                        borderColor: 'rgba(76, 175, 80, 1)',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            suggestedMax: 10,
+                            title: {
+                                display: true,
+                                text: '口數'
+                            }
+                        },
+                        x: {
+                            title: {
+                                display: true,
+                                text: timeScale === 'hour' ? '小時' : '日期'
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        function showRandomEncouragement() {
+            const randomIndex = Math.floor(Math.random() * encouragementMessages.length);
+            encouragementMessage.textContent = encouragementMessages[randomIndex];
+            modal.style.display = "block";
+        }
+
+        incrementFullBtn.addEventListener('click', () => incrementCount(1));
+        incrementHalfBtn.addEventListener('click', () => incrementCount(0.5));
+        timeScaleSelect.addEventListener('change', updateChart);
+
+        closeBtn.onclick = function() {
+            modal.style.display = "none";
+        }
+
+        closeModalBtn.onclick = function() {
+            modal.style.display = "none";
+        }
+
+        window.onclick = function(event) {
+            if (event.target == modal) {
+                modal.style.display = "none";
+            }
+        }
+
+        updateDisplay();
+        showRandomEncouragement();
+    </script>
+</body>
+</html>
