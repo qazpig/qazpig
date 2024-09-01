@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>113-1 本土語課程點名表</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        h1 {
+            text-align: center;
+            color: #2c3e50;
+        }
+        .course {
+            margin-bottom: 30px;
+            border: 1px solid #ddd;
+            padding: 20px;
+            border-radius: 5px;
+        }
+        .course-info {
+            margin-bottom: 15px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        .unchecked {
+            background-color: #ffcccb;
+        }
+        .check-all {
+            margin-bottom: 10px;
+        }
+        #periodFilter {
+            margin-bottom: 20px;
+            padding: 10px;
+            background-color: #f2f2f2;
+            border-radius: 5px;
+        }
+        #periodFilter label {
+            margin-right: 10px;
+        }
+    </style>
+</head>
+<body>
+    <h1>113-1 本土語課程點名表</h1>
+    
+    <div id="periodFilter">
+        <h3>選擇節次：</h3>
+    </div>
+    
+    <div id="attendanceSheets"></div>
+
+    <script>
+        const courseData = [
+            {
+                teacher: "曾秋仁",
+                language: "客家語(四縣)",
+                classroom: "語言教室(躍起3樓)",
+                schedule: [
+                    { period: "第二節", students: ["802－游薰喬", "803－古梓彤", "803－許凡維", "811－黎采潾", "814－劉又云", "814－吳沛恩"] },
+                    { period: "第三節", students: ["808－羅仕喆", "817－李柏穎", "817－劉涵恩", "819－謝佳恩", "821－邱昱菱"] },
+                    { period: "第四節", students: ["813－曾詠婕", "815－張竣皓", "815－詹咏洵", "816－宋彥廷", "816－黃采奕"] },
+                    { period: "第五節", students: ["704－張洺睿", "704－陳樂", "704－李妍溱", "713－穆妍芯", "716－張晴禹", "720－李冠橙", "720－譚彥霖"] },
+                    { period: "第六節", students: ["705－張丞孝", "705－許禛期", "709－張佑丞", "710－蕭珮宜", "711－詹依辰", "717－湯韻霏"] },
+                    { period: "第七節", students: ["702－林宥銘", "702－陳允淇", "703－陳宗輿", "703－呂詩琪", "708－譚筠熙", "712－李守哲"] }
+                ]
+            },
+            {
+                teacher: "許勝明",
+                language: "客家語(大埔)",
+                classroom: "語言教室(躍起3樓)",
+                schedule: [
+                    { period: "第三節", students: ["808－楊米婭"] },
+                    { period: "第四節", students: ["805－巫庭誼", "805－劉東蓄", "805－黃奕晴"] },
+                    { period: "第六節", students: ["706－林宥綸", "714－林湘秦", "718－饒梓棋"] },
+                    { period: "第七節", students: ["708－楊米娜"] }
+                ]
+            },
+            {
+                teacher: "曾惠珍",
+                language: "阿美族語",
+                classroom: "電腦教室402",
+                schedule: [
+                    { period: "第六節", students: ["705－洪來國", "714－黃庭軒", "717－陳昱翰", "718－陳妍熙"] },
+                    { period: "第七節", students: ["803－林品妍", "807－林迶淕", "821－何承恩"] }
+                ]
+            },
+            {
+                teacher: "張英琪",
+                language: "泰雅族語",
+                classroom: "電腦教室402",
+                schedule: [
+                    { period: "第六節", students: ["706－陳柏霖", "710－紹君．吉元", "711－陳語彤"] },
+                    { period: "第七節", students: ["805－洪路佳", "812－林琪恩", "818－黃家瑜", "819－陳巧雲", "821－歐心澤"] }
+                ]
+            },
+            {
+                teacher: "馮莉莉",
+                language: "賽德克族語、都達語",
+                classroom: "電腦教室402",
+                schedule: [
+                    { period: "第六節", students: ["706－孫子恒"] },
+                    { period: "第七節", students: ["813－朱可軒"] }
+                ]
+            },
+            {
+                teacher: "全桂香",
+                language: "卓群布農族語",
+                classroom: "電腦教室402",
+                schedule: [
+                    { period: "第七節", students: ["703－蘇子渝", "720－石以箴"] }
+                ]
+            },
+            {
+                teacher: "徐凱莉",
+                language: "手語",
+                classroom: "分組教室",
+                schedule: [
+                    { period: "第五節", students: ["704－姚品萱", "704－曾品瑜", "707－蔣沛原", "713－施均霖", "713－黃翊喬", "713－葉思妤", "715－粘苡庭", "716－黃雋凱", "720－林少浦"] },
+                    { period: "第六節", students: ["706－楊侑澄", "709－蔡慈恩", "714－范朕逢", "717－吳青蓉"] }
+                ]
+            },
+            {
+                teacher: "王思雯",
+                language: "手語",
+                classroom: "分組教室",
+                schedule: [
+                    { period: "第七節", students: ["708－鄭鼎繼", "708－駱廷筠", "719－黃楷程"] }
+                ]
+            },
+            {
+                teacher: "黃英書",
+                language: "越南語",
+                classroom: "教務處影音室",
+                schedule: [
+                    { period: "第二節", students: ["814－鐘民琇"] }
+                ]
+            },
+            {
+                teacher: "楊雅娜",
+                language: "印尼語",
+                classroom: "教務處影音室",
+                schedule: [
+                    { period: "第四節", students: ["801－周薇霓"] }
+                ]
+            },
+            {
+                teacher: "待定",
+                language: "南排灣族語",
+                classroom: "教務處影音室",
+                schedule: [
+                    { period: "第五節", students: ["720－周家浚"] },
+                    { period: "第七節", students: ["807－張呈浚", "821－古子恩", "821－何以杰"] }
+                ]
+            },
+            {
+                teacher: "待定",
+                language: "太魯閣族語",
+                classroom: "教務處影音室",
+                schedule: [
+                    { period: "第五節", students: ["720－裴為皓"] }
+                ]
+            },
+            {
+                teacher: "待定",
+                language: "東排灣族語",
+                classroom: "教務處影音室",
+                schedule: [
+                    { period: "第六節", students: ["701－葉佳妮"] }
+                ]
+            },
+            {
+                teacher: "待定",
+                language: "卡那卡那富語",
+                classroom: "教務處影音室",
+                schedule: [
+                    { period: "第七節", students: ["703－王晨昊"] }
+                ]
+            },
+            {
+                teacher: "待定",
+                language: "泰語",
+                classroom: "教務處影音室",
+                schedule: [
+                    { period: "第七節", students: ["712－張孝圓"] }
+                ]
+            }
+        ];
+
+        function createAttendanceSheet(course) {
+            const courseDiv = document.createElement('div');
+            courseDiv.className = 'course';
+
+            const courseInfo = document.createElement('div');
+            courseInfo.className = 'course-info';
+            courseInfo.innerHTML = `
+                <h2>${course.language} - ${course.teacher}</h2>
+                <p><strong>教室：</strong>${course.classroom}</p>
+            `;
+            courseDiv.appendChild(courseInfo);
+
+            course.schedule.forEach(slot => {
+                const table = document.createElement('table');
+                const thead = document.createElement('thead');
+                const tbody = document.createElement('tbody');
+
+                thead.innerHTML = `
+                    <tr>
+                        <th colspan="2">${slot.period}</th>
+                    </tr>
+                    <tr>
+                        <th>學生</th>
+                        <th>出席</th>
+                    </tr>
+                `;
+
+                const checkAllDiv = document.createElement('div');
+                checkAllDiv.className = 'check-all';
+                checkAllDiv.innerHTML = `
+                    <label>
+                        <input type="checkbox" class="check-all-checkbox"> 全選
+                    </label>
+                `;
+
+                tbody.innerHTML = slot.students.map(student => `
+                    <tr>
+                        <td>${student}</td>
+                        <td><input type="checkbox" class="attendance-checkbox"></td>
+                    </tr>
+                `).join('');
+
+                table.appendChild(thead);
+                table.appendChild(tbody);
+                courseDiv.appendChild(checkAllDiv);
+                courseDiv.appendChild(table);
+
+                const checkAllCheckbox = checkAllDiv.querySelector('.check-all-checkbox');
+                const attendanceCheckboxes = tbody.querySelectorAll('.attendance-checkbox');
+
+                checkAllCheckbox.addEventListener('change', function() {
+                    attendanceCheckboxes.forEach(checkbox => {
+                        checkbox.checked = this.checked;
+                        updateRowStyle(checkbox);
+                    });
+                });
+
+                attendanceCheckboxes.forEach(checkbox => {
+                    checkbox.addEventListener('change', function() {
+                        updateRowStyle(this);
+                        updateCheckAllState();
+                    });
+                });
+
+                function updateRowStyle(checkbox) {
+                    const row = checkbox.closest('tr');
+                    row.classList.toggle('unchecked', !checkbox.checked);
+                }
+
+                function updateCheckAllState() {
+                    const allChecked = Array.from(attendanceCheckboxes).every(checkbox => checkbox.checked);
+                    checkAllCheckbox.checked = allChecked;
+                }
+            });
+
+            return courseDiv;
+        }
+
+        function createPeriodFilter() {
+            const periods = ["第二節", "第三節", "第四節", "第五節", "第六節", "第七節"];
+            const filterDiv = document.getElementById('periodFilter');
+            
+            periods.forEach(period => {
+                const label = document.createElement('label');
+                label.innerHTML = `
+                    <input type="checkbox" class="period-filter" value="${period}" checked> ${period}
+                `;
+                filterDiv.appendChild(label);
+            });
+
+            const filterCheckboxes = document.querySelectorAll('.period-filter');
+            filterCheckboxes.forEach(checkbox => {
+                checkbox.addEventListener('change', updateVisibility);
+            });
+        }
+
+        function updateVisibility() {
+            const selectedPeriods = Array.from(document.querySelectorAll('.period-filter:checked')).map(cb => cb.value);
+            const tables = document.querySelectorAll('table');
+            
+            tables.forEach(table => {
+                const period = table.querySelector('th').textContent;
+                const courseDiv = table.closest('.course');
+                
+                if (selectedPeriods.includes(period)) {
+                    table.style.display = '';
+                    courseDiv.style.display = '';
+                } else {
+                    table.style.display = 'none';
+                    if (Array.from(courseDiv.querySelectorAll('table')).every(t => t.style.display === 'none')) {
+                        courseDiv.style.display = 'none';
+                    }
+                }
+            });
+        }
+
+        const attendanceSheetsContainer = document.getElementById('attendanceSheets');
+        courseData.forEach(course => {
+            const sheet = createAttendanceSheet(course);
+            attendanceSheetsContainer.appendChild(sheet);
+        });
+
+        createPeriodFilter();
+        updateVisibility();
+    </script>
+</body>
+</html>
