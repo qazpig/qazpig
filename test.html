@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>113-1 本土語課程點名表</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        h1, h2, h3 {
+            color: #2c3e50;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: center;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        #personalNotes table {
+            table-layout: fixed;
+        }
+        #personalNotes th, #personalNotes td {
+            width: 14.28%;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+        #periodFilter {
+            margin-bottom: 20px;
+        }
+        #periodFilter label {
+            margin-right: 10px;
+        }
+        #resetButton {
+            margin-bottom: 20px;
+            padding: 5px 10px;
+            background-color: #f44336;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        #resetButton:hover {
+            background-color: #d32f2f;
+        }
+        .course {
+            margin-bottom: 30px;
+            border: 1px solid #ddd;
+            padding: 20px;
+            border-radius: 5px;
+        }
+        .period-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 5px 10px;
+            background-color: #f2f2f2;
+        }
+        .unchecked {
+            background-color: #ffcccb;
+        }
+    </style>
+</head>
+<body>
+    <h1>113-1 本土語課程點名表</h1>
+
+    <div id="personalNotes">
+        <h3>教室分配</h3>
+        <table>
+            <tr>
+                <th></th>
+                <th>二</th>
+                <th>三</th>
+                <th>四</th>
+                <th>五</th>
+                <th>六</th>
+                <th>七</th>
+            </tr>
+            <tr>
+                <th rowspan="2">奕凱</th>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td>分組教室-手語</td>
+                <td></td>
+                <td></td>
+            </tr>
+            <tr>
+                <td></td>
+                <td></td>
+                <td>可能702觀課</td>
+                <td></td>
+                <td colspan="2">電腦教室402-族語</td>
+            </tr>
+            <tr>
+                <th rowspan="2">芷林</th>
+                <td colspan="4">語言教室3樓-客語四縣</td>
+                <td></td>
+                <td></td>
+            </tr>
+            <tr>
+                <td></td>
+                <td>影音室-客語大埔</td>
+                <td></td>
+                <td></td>
+                <td>影音室-客語大埔</td>
+                <td></td>
+            </tr>
+            <tr>
+                <th>遠距</th>
+                <td>越南</td>
+                <td></td>
+                <td>印尼</td>
+                <td>南排灣</td>
+                <td>東排灣、太魯閣</td>
+                <td>南排灣、卡那卡那富</td>
+            </tr>
+        </table>
+    </div>
+
+    <div id="periodFilter">
+        <h3>選擇節次：</h3>
+    </div>
+
+    <button id="resetButton">重置所有數據</button>
+
+    <div id="attendanceSheets"></div>
+
+    <script>
+        const courseData = [
+            {
+                teacher: "曾秋仁",
+                language: "客家語(四縣)",
+                classroom: "語言教室(躍起3樓)",
+                schedule: [
+                    { period: "第二節", students: ["802－游薰喬", "803－古梓彤", "803－許凡維", "811－黎采潾", "814－劉又云", "814－吳沛恩"] },
+                    { period: "第三節", students: ["808－羅仕喆", "817－李柏穎", "817－劉涵恩", "819－謝佳恩", "821－邱昱菱"] },
+                    { period: "第四節", students: ["813－曾詠婕", "815－張竣皓", "815－詹咏洵", "816－宋彥廷", "816－黃采奕"] },
+                    { period: "第五節", students: ["704－張洺睿", "704－陳樂", "704－李妍溱", "713－穆妍芯", "716－張晴禹", "720－李冠橙", "720－譚彥霖"] },
+                    { period: "第六節", students: ["705－張丞孝", "705－許禛期", "709－張佑丞", "710－蕭珮宜", "711－詹依辰", "717－湯韻霏"] },
+                    { period: "第七節", students: ["702－林宥銘", "702－陳允淇", "703－陳宗輿", "703－呂詩琪", "708－譚筠熙", "712－李守哲"] }
+                ]
+            },
+            {
+                teacher: "許勝明",
+                language: "客家語(大埔)",
+                classroom: "語言教室(躍起3樓)",
+                schedule: [
+                    { period: "第三節", students: ["808－楊米婭"] },
+                    { period: "第四節", students: ["805－巫庭誼", "805－劉東蓄", "805－黃奕晴"] },
+                    { period: "第六節", students: ["706－林宥綸", "714－林湘秦", "718－饒梓棋"] },
+                    { period: "第七節", students: ["708－楊米娜"] }
+                ]
+            },
+            // ... 其他課程數據 ...
+        ];
+
+        function createAttendanceSheet(course) {
+            const courseDiv = document.createElement('div');
+            courseDiv.className = 'course';
+
+            const courseInfo = document.createElement('div');
+            courseInfo.className = 'course-info';
+            courseInfo.innerHTML = `
+                <h2>${course.language} - ${course.teacher}</h2>
+                <p><strong>教室：</strong>${course.classroom}</p>
+            `;
+            courseDiv.appendChild(courseInfo);
+
+            course.schedule.forEach(slot => {
+                const table = document.createElement('table');
+                table.classList.add('attendance-table');
+                const thead = document.createElement('thead');
+                const tbody = document.createElement('tbody');
+
+                const periodHeader = document.createElement('div');
+                periodHeader.className = 'period-header';
+                periodHeader.innerHTML = `
+                    <span>${slot.period}</span>
+                    <label>
+                        <input type="checkbox" class="check-all-checkbox"> 全選
+                    </label>
+                `;
+
+                thead.innerHTML = `
+                    <tr>
+                        <th>學生</th>
+                        <th>出席</th>
+                    </tr>
+                `;
+
+                tbody.innerHTML = slot.students.map(student => {
+                    const studentId = `${course.language}-${slot.period}-${student}`;
+                    const isChecked = localStorage.getItem(studentId) === 'true';
+                    return `
+                        <tr class="${isChecked ? '' : 'unchecked'}">
+                            <td>${student}</td>
+                            <td><input type="checkbox" class="attendance-checkbox" data-student-id="${studentId}" ${isChecked ? 'checked' : ''}></td>
+                        </tr>
+                    `;
+                }).join('');
+
+                table.appendChild(periodHeader);
+                table.appendChild(thead);
+                table.appendChild(tbody);
+                courseDiv.appendChild(table);
+
+                const checkAllCheckbox = periodHeader.querySelector('.check-all-checkbox');
+                const attendanceCheckboxes = tbody.querySelectorAll('.attendance-checkbox');
+
+                checkAllCheckbox.addEventListener('change', function() {
+                    attendanceCheckboxes.forEach(checkbox => {
+                        checkbox.checked = this.checked;
+                        updateRowStyle(checkbox);
+                        saveAttendance(checkbox);
+                    });
+                });
+
+                attendanceCheckboxes.forEach(checkbox => {
+                    checkbox.addEventListener('change', function() {
+                        updateRowStyle(this);
+                        updateCheckAllState(checkAllCheckbox, attendanceCheckboxes);
+                        saveAttendance(this);
+                    });
+                });
+
+                updateCheckAllState(checkAllCheckbox, attendanceCheckboxes);
+            });
+
+            return courseDiv;
+        }
+
+        function updateRowStyle(checkbox) {
+            const row = checkbox.closest('tr');
+            row.classList.toggle('unchecked', !checkbox.checked);
+        }
+
+        function updateCheckAllState(checkAllCheckbox, attendanceCheckboxes) {
+            const allChecked = Array.from(attendanceCheckboxes).every(checkbox => checkbox.checked);
+            checkAllCheckbox.checked = allChecked;
+        }
+
+        function saveAttendance(checkbox) {
+            const studentId = checkbox.getAttribute('data-student-id');
+            localStorage.setItem(studentId, checkbox.checked);
+        }
+
+        function createPeriodFilter() {
+            const periods = ["第二節", "第三節", "第四節", "第五節", "第六節", "第七節"];
+            const filterDiv = document.getElementById('periodFilter');
+            
+            periods.forEach(period => {
+                const isChecked = localStorage.getItem(`period-${period}`) !== 'false';
+                const label = document.createElement('label');
+                label.innerHTML = `
+                    <input type="checkbox" class="period-filter" value="${period}" ${isChecked ? 'checked' : ''}> ${period}
+                `;
+                filterDiv.appendChild(label);
+            });
+
+            const filterCheckboxes = document.querySelectorAll('.period-filter');
+            filterCheckboxes.forEach(checkbox => {
+                checkbox.addEventListener('change', function() {
+                    localStorage.setItem(`period-${this.value}`, this.checked);
+                    updateVisibility();
+                });
+            });
+        }
+
+        function updateVisibility() {
+            const selectedPeriods = Array.from(document.querySelectorAll('.period-filter:checked')).map(cb => cb.value);
+            const tables = document.querySelectorAll('table.attendance-table');
+            
+            tables.forEach(table => {
+                const period = table.querySelector('.period-header span').textContent;
+                const courseDiv = table.closest('.course');
+                
+                if (selectedPeriods.includes(period)) {
+                    table.style.display = '';
+                    courseDiv.style.display = '';
+                } else {
+                    table.style.display = 'none';
+                    if (Array.from(courseDiv.querySelectorAll('table.attendance-table')).every(t => t.style.display === 'none')) {
+                        courseDiv.style.display = 'none';
+                    }
+                }
+            });
+        }
+
+        function resetAllData() {
+            if (confirm('確定要刪除所有存儲的數據嗎？此操作無法撤銷。')) {
+                localStorage.clear();
+                location.reload();
+            }
+        }
+
+        const attendanceSheetsContainer = document.getElementById('attendanceSheets');
+        courseData.forEach(course => {
+            const sheet = createAttendanceSheet(course);
+            attendanceSheetsContainer.appendChild(sheet);
+        });
+
+        createPeriodFilter();
+        updateVisibility();
+
+        document.getElementById('resetButton').addEventListener('click', resetAllData);
+    </script>
+</body>
+</html>

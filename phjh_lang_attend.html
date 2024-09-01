@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="zh-TW">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -13,59 +14,259 @@
             margin: 0 auto;
             padding: 20px;
         }
+
         h1 {
             text-align: center;
             color: #2c3e50;
         }
+
         .course {
             margin-bottom: 30px;
             border: 1px solid #ddd;
             padding: 20px;
             border-radius: 5px;
         }
+
         .course-info {
             margin-bottom: 15px;
         }
+
         table {
             width: 100%;
             border-collapse: collapse;
             margin-top: 10px;
         }
-        th, td {
+
+        th,
+        td {
             border: 1px solid #ddd;
             padding: 8px;
             text-align: left;
         }
+
         th {
             background-color: #f2f2f2;
         }
+
         .unchecked {
             background-color: #ffcccb;
         }
+
         .check-all {
             margin-bottom: 10px;
         }
+
         #periodFilter {
             margin-bottom: 20px;
             padding: 10px;
             background-color: #f2f2f2;
             border-radius: 5px;
         }
+
         #periodFilter label {
             margin-right: 10px;
         }
+
+        #personalNotes {
+            margin-bottom: 20px;
+            padding: 10px;
+            background-color: #f0f0f0;
+            border-radius: 5px;
+        }
+
+        #personalNotes h3 {
+            text-align: center;
+            margin-bottom: 15px;
+        }
+
+        #personalNotes table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+
+        #personalNotes th,
+        #personalNotes td {
+            border: 1px solid #000000;
+            padding: 8px;
+            text-align: center;
+            width: 14.28%;
+            /* 100% / 7 列 */
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        #personalNotes th {
+            background-color: #e0e0e0;
+        }
+
+        #personalNotes tr:nth-child(even) {
+            background-color: #f8f8f8;
+        }
+
+        #personalNotes tr:hover {
+            background-color: #e8e8e8;
+        }
+
+        #personalNotes table:nth-of-type(2) th,
+        #personalNotes table:nth-of-type(2) td {
+            width: 33.33%;
+            /* 100% / 3 列 */
+        }
+
+        /* 為第一列（標題行）設置樣式 */
+        #personalNotes table:nth-of-type(1) tr:first-child th {
+            width: 12.5%;
+            /* 稍微縮小第一列的寬度 */
+        }
+
+        #personalNotes table:nth-of-type(1) tr:first-child th:first-child {
+            width: 5%;
+            /* 進一步縮小第一個單元格的寬度 */
+        }
+
+        #resetButton {
+            margin-left: 10px;
+            padding: 5px 10px;
+            background-color: #f44336;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        #resetButton:hover {
+            background-color: #d32f2f;
+        }
+
+        .period-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 5px 10px;
+            background-color: #f2f2f2;
+        }
+
+        .period-header label {
+            display: flex;
+            align-items: center;
+        }
+
+        .period-header input[type="checkbox"] {
+            margin-right: 5px;
+        }
+
+        #clearStorageButton {
+            margin-bottom: 20px;
+            padding: 10px 15px;
+            background-color: #f44336;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        #clearStorageButton:hover {
+            background-color: #d32f2f;
+        }
     </style>
 </head>
+
 <body>
     <h1>113-1 本土語課程點名表</h1>
-    
+
+    <div id="personalNotes">
+        <h3>教室分配</h3>
+        <table>
+            <tr>
+                <th></th>
+                <th>二 </th>
+                <th>三 </th>
+                <th>四 </th>
+                <th>五 </th>
+                <th>六 </th>
+                <th>七 </th>
+            </tr>
+            <tr>
+                <th rowspan="2">奕凱</th>
+                <th>---</th>
+                <th>---</th>
+                <th>---</th>
+                <th colspan="2">分組教室-手語</th>
+                <!-- <th colspan="2">電腦教室402</th> -->
+                <th>---</th>
+            </tr>
+            <tr>
+                <!-- <th>奕凱</th> -->
+                <th>---</th>
+                <th>---</th>
+                <th>可能702觀課</th>
+                <th>---</th>
+                <!-- <th>分組教室-手語</th> -->
+                <th colspan="2">電腦教室402-族語</th>
+            </tr>
+            <tr>
+                <th rowspan="2">芷林</th>
+                <th colspan="6">語言教室3樓-客語四縣</th>
+                <!-- <th></th> -->
+                <!-- <th></th>
+                <th></th>
+                <th></th> -->
+                <!-- <th></th> -->
+            </tr>
+            <tr>
+                <!-- <th>芷林</th> -->
+                <th>---</th>
+                <th colspan="2">影音室-客語大埔</th>
+                <th>---</th>
+                <th colspan="2">影音室-客語大埔</th>
+            </tr>
+            <tr>
+                <th>遠距</th>
+                <th>越南</th>
+                <th>---</th>
+                <th>印尼</th>
+                <th>南排灣、太魯閣</th>
+                <th>東排灣</th>
+                <th>南排灣、卡那卡那富</th>
+            </tr>
+            <!-- <tr>
+                <th></th>
+                <th></th>
+                <th></th>
+                <th></th>
+            </tr> -->
+        </table>
+        <!-- 
+        <table>
+            <tr>
+                <th colspan="2">
+                    <span>第一節</span>
+                    <label>
+                        <input type="checkbox" class="check-all-checkbox"> 全選
+                    </label>
+                </th>
+            </tr>
+            <tr>
+                <th>學生</th>
+                <th>出席</th>
+...
+            </tr>
+        </table> -->
+
+    </div>
+
     <div id="periodFilter">
         <h3>選擇節次：</h3>
     </div>
-    
+
+    <button id="clearStorageButton">刪除所有暫存數據</button>
+
     <div id="attendanceSheets"></div>
 
     <script>
+        console.log("JavaScript 開始執行");
         const courseData = [
             {
                 teacher: "曾秋仁",
@@ -83,7 +284,7 @@
             {
                 teacher: "許勝明",
                 language: "客家語(大埔)",
-                classroom: "語言教室(躍起3樓)",
+                classroom: "教務處影音室",
                 schedule: [
                     { period: "第三節", students: ["808－楊米婭"] },
                     { period: "第四節", students: ["805－巫庭誼", "805－劉東蓄", "805－黃奕晴"] },
@@ -97,7 +298,7 @@
                 classroom: "電腦教室402",
                 schedule: [
                     { period: "第六節", students: ["705－洪來國", "714－黃庭軒", "717－陳昱翰", "718－陳妍熙"] },
-                    { period: "第七節", students: ["803－林品妍", "807－林迶淕", "821－何承恩"] }
+                    { period: "第七節", students: ["803－林品妍", "807－林迶淕", "821－陳耀恩(改名)"] }
                 ]
             },
             {
@@ -203,129 +404,186 @@
         ];
 
         function createAttendanceSheet(course) {
+            console.log("創建出勤表：", course.language);
             const courseDiv = document.createElement('div');
             courseDiv.className = 'course';
 
             const courseInfo = document.createElement('div');
             courseInfo.className = 'course-info';
             courseInfo.innerHTML = `
-                <h2>${course.language} - ${course.teacher}</h2>
-                <p><strong>教室：</strong>${course.classroom}</p>
-            `;
+        <h2>${course.language} - ${course.teacher}</h2>
+        <p><strong>教室：</strong>${course.classroom}</p>
+    `;
             courseDiv.appendChild(courseInfo);
 
             course.schedule.forEach(slot => {
                 const table = document.createElement('table');
+                table.classList.add('attendance-table');
                 const thead = document.createElement('thead');
                 const tbody = document.createElement('tbody');
 
                 thead.innerHTML = `
-                    <tr>
-                        <th colspan="2">${slot.period}</th>
-                    </tr>
-                    <tr>
-                        <th>學生</th>
-                        <th>出席</th>
-                    </tr>
-                `;
+            <tr>
+                <th colspan="2">
+                    <div class="period-header">
+                        <span>${slot.period}</span>
+                        <label>
+                            <input type="checkbox" class="check-all-checkbox"> 全選
+                        </label>
+                    </div>
+                </th>
+            </tr>
+            <tr>
+                <th>學生</th>
+                <th>出席</th>
+            </tr>
+        `;
 
-                const checkAllDiv = document.createElement('div');
-                checkAllDiv.className = 'check-all';
-                checkAllDiv.innerHTML = `
-                    <label>
-                        <input type="checkbox" class="check-all-checkbox"> 全選
-                    </label>
-                `;
-
-                tbody.innerHTML = slot.students.map(student => `
-                    <tr>
-                        <td>${student}</td>
-                        <td><input type="checkbox" class="attendance-checkbox"></td>
-                    </tr>
-                `).join('');
+                tbody.innerHTML = slot.students.map(student => {
+                    const studentId = `${course.language}-${slot.period}-${student}`;
+                    const isChecked = localStorage.getItem(studentId) === 'true';
+                    return `
+                <tr class="${isChecked ? '' : 'unchecked'}">
+                    <td>${student}</td>
+                    <td><input type="checkbox" class="attendance-checkbox" data-student-id="${studentId}" ${isChecked ? 'checked' : ''}></td>
+                </tr>
+            `;
+                }).join('');
 
                 table.appendChild(thead);
                 table.appendChild(tbody);
-                courseDiv.appendChild(checkAllDiv);
                 courseDiv.appendChild(table);
 
-                const checkAllCheckbox = checkAllDiv.querySelector('.check-all-checkbox');
+                const checkAllCheckbox = table.querySelector('.check-all-checkbox');
                 const attendanceCheckboxes = tbody.querySelectorAll('.attendance-checkbox');
 
-                checkAllCheckbox.addEventListener('change', function() {
+                checkAllCheckbox.addEventListener('change', function () {
                     attendanceCheckboxes.forEach(checkbox => {
                         checkbox.checked = this.checked;
                         updateRowStyle(checkbox);
+                        saveAttendance(checkbox);
                     });
                 });
 
                 attendanceCheckboxes.forEach(checkbox => {
-                    checkbox.addEventListener('change', function() {
+                    checkbox.addEventListener('change', function () {
                         updateRowStyle(this);
-                        updateCheckAllState();
+                        updateCheckAllState(checkAllCheckbox, attendanceCheckboxes);
+                        saveAttendance(this);
                     });
                 });
 
-                function updateRowStyle(checkbox) {
-                    const row = checkbox.closest('tr');
-                    row.classList.toggle('unchecked', !checkbox.checked);
-                }
-
-                function updateCheckAllState() {
-                    const allChecked = Array.from(attendanceCheckboxes).every(checkbox => checkbox.checked);
-                    checkAllCheckbox.checked = allChecked;
-                }
+                updateCheckAllState(checkAllCheckbox, attendanceCheckboxes);
             });
 
             return courseDiv;
         }
 
+        // 重新定義之前被註釋掉的函數
+        function updateRowStyle(checkbox) {
+            const row = checkbox.closest('tr');
+            row.classList.toggle('unchecked', !checkbox.checked);
+        }
+
+        function updateCheckAllState(checkAllCheckbox, attendanceCheckboxes) {
+            const allChecked = Array.from(attendanceCheckboxes).every(checkbox => checkbox.checked);
+            checkAllCheckbox.checked = allChecked;
+        }
+
+        function saveAttendance(checkbox) {
+            const studentId = checkbox.getAttribute('data-student-id');
+            localStorage.setItem(studentId, checkbox.checked);
+        }
+
         function createPeriodFilter() {
             const periods = ["第二節", "第三節", "第四節", "第五節", "第六節", "第七節"];
             const filterDiv = document.getElementById('periodFilter');
-            
+
             periods.forEach(period => {
+                const isChecked = localStorage.getItem(`period-${period}`) !== 'false';
                 const label = document.createElement('label');
                 label.innerHTML = `
-                    <input type="checkbox" class="period-filter" value="${period}" checked> ${period}
-                `;
+            <input type="checkbox" class="period-filter" value="${period}" ${isChecked ? 'checked' : ''}> ${period}
+        `;
                 filterDiv.appendChild(label);
             });
 
             const filterCheckboxes = document.querySelectorAll('.period-filter');
             filterCheckboxes.forEach(checkbox => {
-                checkbox.addEventListener('change', updateVisibility);
+                checkbox.addEventListener('change', function () {
+                    localStorage.setItem(`period-${this.value}`, this.checked);
+                    updateVisibility();
+                });
             });
         }
 
         function updateVisibility() {
+            console.log("更新可見性");
             const selectedPeriods = Array.from(document.querySelectorAll('.period-filter:checked')).map(cb => cb.value);
-            const tables = document.querySelectorAll('table');
-            
+            // const tables = document.querySelectorAll('table');.
+            console.log("選中的節次：", selectedPeriods);
+            const tables = document.querySelectorAll('table.attendance-table');
+            console.log("找到的表格數量：", tables.length);
+
             tables.forEach(table => {
-                const period = table.querySelector('th').textContent;
+                const periodHeader = table.querySelector('.period-header span');
+                if (!periodHeader) return; // 如果找不到節次信息，跳過這個表格
+
+                const period = periodHeader.textContent.trim();
                 const courseDiv = table.closest('.course');
-                
+
                 if (selectedPeriods.includes(period)) {
                     table.style.display = '';
                     courseDiv.style.display = '';
                 } else {
                     table.style.display = 'none';
-                    if (Array.from(courseDiv.querySelectorAll('table')).every(t => t.style.display === 'none')) {
+                    if (Array.from(courseDiv.querySelectorAll('table.attendance-table')).every(t => t.style.display === 'none')) {
                         courseDiv.style.display = 'none';
                     }
                 }
             });
+
+            // 保存節次選擇狀態到本地存儲
+            const periods = ["第二節", "第三節", "第四節", "第五節", "第六節", "第七節"];
+            periods.forEach(period => {
+                localStorage.setItem(`period-${period}`, selectedPeriods.includes(period));
+            });
         }
 
+        function clearLocalStorage() {
+            if (confirm('確定要刪除所有暫存數據嗎？此操作無法撤銷。')) {
+                localStorage.clear();
+                location.reload(); // 重新加載頁面以重置所有狀態
+            }
+        }
+
+        console.log("開始生成出勤表");
         const attendanceSheetsContainer = document.getElementById('attendanceSheets');
+        console.log("attendanceSheetsContainer:", attendanceSheetsContainer);
+        console.log("courseData:", courseData);
+
         courseData.forEach(course => {
+            console.log("處理課程：", course.language);
             const sheet = createAttendanceSheet(course);
             attendanceSheetsContainer.appendChild(sheet);
         });
 
-        createPeriodFilter();
-        updateVisibility();
+
+        document.addEventListener('DOMContentLoaded', function () {
+            console.log("開始創建節次過濾器");
+            createPeriodFilter();
+            console.log("更新可見性");
+            updateVisibility();
+
+            // 添加刪除暫存按鈕的事件監聽器
+            const clearButton = document.getElementById('clearStorageButton');
+            if (clearButton) {
+                clearButton.addEventListener('click', clearLocalStorage);
+            }
+        });
+
+        console.log("JavaScript 執行完畢");
     </script>
 </body>
+
 </html>
